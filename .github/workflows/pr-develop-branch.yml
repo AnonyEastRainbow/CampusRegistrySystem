@@ -30,10 +30,10 @@ jobs:
         runs-on: ubuntu-latest
         if: ${{ github.actor != 'dependabot[bot]' }}
         steps:
-            # Now we install nodejs in the VM, and specify version 14
+            # Now we install nodejs in the VM, and specify version 18
             - uses: actions/setup-node@v3
               with:
-                node-version: '14'
+                node-version: '18'
 
             # The idea is that the VM can access your remote repository
             # because your repository is an sfdx project.
@@ -129,16 +129,16 @@ jobs:
             # was generated from. This works just like that, there's no need to create
             # connected apps or any else. 
 
-            # The URL is stored in the Github Secret named SFDX_INTEGRATION_URL
+            # The URL is stored in the Github Secret named SFDX_TEST_ENV_URL
             # so here we store the URL into a text file
             - name: 'Populate auth file with SFDX_URL secret of integration org'
               shell: bash
               run: |
-                  echo ${{ secrets.SFDX_INTEGRATION_URL}} > ./SFDX_INTEGRATION_URL.txt
+                  echo ${{ secrets.SFDX_TEST_ENV_URL}} > ./SFDX_TEST_ENV_URL.txt
 
             # Authenticate to org using the URL stored in the text file
             - name: 'Authenticate to Integration Org'
-              run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a integration
+              run: sfdx auth:sfdxurl:store -f ./SFDX_TEST_ENV_URL.txt -s -a integration
 
             # We use SFDX Git Delta to create a directory with only the metadata that has changed.
             # this allows us to deploy only those changes, as opposed to deploying the entire branch. 
