@@ -84,7 +84,7 @@ jobs:
               # as this allows us to reference the list in a subsequent step.  If you
               # were using a normal env variable, its value would not be available outside this step.
               run: |
-                  echo $PR_BODY > ./pr_body.txt
+                  echo $PR_BODY > ./cicd/pr_body.txt
                   node ./cicd/parsePR.js
                   TESTS=$(cat testsToRun.txt)
                   echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
