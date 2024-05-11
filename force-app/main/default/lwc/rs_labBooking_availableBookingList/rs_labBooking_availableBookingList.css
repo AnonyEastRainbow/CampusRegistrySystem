@@ -1,0 +1,18 @@
+:host {
+    /* --slds-c-card-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.40); */
+}
+
+.container {
+    min-height: 200px;
+}
+
+lightning-accordion {
+    --slds-c-accordion-sizing-border: 0px;
+}
+
+.popup-error{
+    position: absolute;
+    top: -120px;
+    left: 0rem;
+    width: 300px;
+}

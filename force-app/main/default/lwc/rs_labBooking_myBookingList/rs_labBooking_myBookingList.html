@@ -1,0 +1,108 @@
+<template>
+    <div class="container slds-is-relative">
+        <lightning-spinner alternative-text="Loading" variant="brand" if:true={isLoading}></lightning-spinner>
+        <lightning-datatable key-field="id" hide-checkbox-column="true" data={myBookingList} columns={myBookingTableColumns} onrowaction={handleRowAction}></lightning-datatable>
+    </div>
+    <c-rs_pagination_cmn record-count={totalCounts} page-num={pageNum} page-size={pageSize} onpagechange={handlePageChange}></c-rs_pagination_cmn>
+    <c-rs_dialog_cmn title="预约详情" size="medium" theme="info" if:true={bookingDetailInfo.isShowDetailDialog}>
+        <div class="slds-is-relative">
+            <lightning-spinner alternative-text="Loading" variant="brand" if:true={bookingDetailInfo.isLoading}></lightning-spinner>
+            <lightning-accordion allow-multiple-sections-open active-section-name={bookingDetailInfo.activeSections}>
+                <lightning-accordion-section name="bookingInfo" label="预约信息">
+                    <div>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">申请人</span>
+                                    <div class="slds-form-element__control">
+                                        <span class="slds-form-element__static">{bookingDetailInfo.labApplication.Applicant__r.Name}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">学院</span>
+                                    <div class="slds-form-element__control">
+                                        <span class="slds-form-element__static">{bookingDetailInfo.labApplication.SecondaryCollege__r.Name}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">班级</span>
+                                    <div class="slds-form-element__control">
+                                        <span class="slds-form-element__static">{bookingDetailInfo.labApplication.Class__r.Name}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">专业</span>
+                                    <div class="slds-form-element__control">
+                                        <span class="slds-form-element__static">{bookingDetailInfo.labApplication.Major__c}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">学号</span>
+                                    <div class="slds-form-element__control">
+                                        <span class="slds-form-element__static">{bookingDetailInfo.labApplication.StudentNumber__c}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">批准状态</span>
+                                    <div class="slds-form-element__control">
+                                        <span class="slds-form-element__static">{bookingDetailInfo.labApplication.ApprovalStatus__c}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </lightning-accordion-section>
+                <lightning-accordion-section name="labInfo" label="实验室信息">
+                    <lightning-record-view-form record-id={bookingDetailInfo.lab.recordId} object-api-name="LabBooking__c" onload={handleLabInfoLoaded} style="min-height: 150px;">
+                        <c-rs_loading-place-holder_cmn row-number="3" if:true={bookingDetailInfo.lab.isLoading}></c-rs_loading-place-holder_cmn>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-output-field field-name="Location__c"></lightning-output-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-output-field field-name="LabAddress__c"></lightning-output-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-output-field field-name="LabType__c"></lightning-output-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-output-field field-name="LabEquipment__c"></lightning-output-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-output-field field-name="OpeningTime__c"></lightning-output-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-output-field field-name="ClosingTime__c"></lightning-output-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-output-field field-name="BookingStartTime__c"></lightning-output-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-output-field field-name="BookingEndTime__c"></lightning-output-field>
+                            </div>
+                        </div>
+                    </lightning-record-view-form>
+                </lightning-accordion-section>
+                <lightning-accordion-section name="approvalInfo" label="批准详情">
+                    <c-rs_loading-place-holder_cmn row-number="1" lwc:if={bookingDetailInfo.approval.isLoading}></c-rs_loading-place-holder_cmn>
+                    <lightning-datatable key-field="id" hide-checkbox-column="true" data={bookingDetailInfo.approval.stepList} columns={approvalInfoTableColumns} lwc:else></lightning-datatable>
+                </lightning-accordion-section>
+            </lightning-accordion>
+        </div>
+        <div slot="footer">
+            <div>
+                <button class="slds-button slds-button_neutral" onclick={handleDetailClose}>关闭</button>
+            </div>
+        </div>
+    </c-rs_dialog_cmn>
+</template>

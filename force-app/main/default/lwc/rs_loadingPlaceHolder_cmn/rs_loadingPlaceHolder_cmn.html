@@ -1,0 +1,20 @@
+<template>
+  <div class="slds-clearfix detail-panel-root slds-card">
+    <div class="left-column">
+      <template for:each={rows} for:item="row">
+        <div key={row.id} class="field">
+          <div class="text text-primary text-shorter text-thin"></div>
+          <div class="text text-secondary text-medium text-thin"></div>
+        </div>
+      </template>
+    </div>
+    <div class="right-column">
+      <template for:each={rows} for:item="row">
+        <div key={row.id} class="field">
+          <div class="text text-primary text-shorter text-thin"></div>
+          <div class="text text-secondary text-medium text-thin"></div>
+        </div>
+      </template>
+    </div>
+    </div>
+</template>

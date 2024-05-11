@@ -1,0 +1,213 @@
+<template>
+    <div>
+        <!-- 筛选条件 -->
+        <div class="slds-grid slds-wrap">
+            <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12 slds-p-around_x-small">
+                <c-rs_combobox_cmn label="地点" name="locationSelected" multi-select="true" option-list={searchFilter.locationOptions} selected-values={searchFilter.locationSelected} pill-icon="standard:account" onselectoption={handleFilterInput}></c-rs_combobox_cmn>
+            </div>
+            <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12 slds-p-around_x-small">
+                <c-rs_combobox_cmn label="场地类别" name="labTypeSelected" multi-select="true" option-list={searchFilter.labTypeOptions} selected-values={searchFilter.labTypeSelected} pill-icon="standard:all" onselectoption={handleFilterInput}></c-rs_combobox_cmn>
+            </div>
+            <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12 slds-p-around_x-small">
+                <lightning-input type="text" name="labEquipment" label="实验室设备" value={searchFilter.labEquipment} onchange={handleFilterInput}></lightning-input>
+            </div>
+            <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12 slds-p-around_x-small">
+                <label class="slds-form-element__label"></label>
+                <lightning-input type="toggle" name="noNeedApproval" label="无需审批" checked={searchFilter.noNeedApproval} onchange={handleFilterInput}></lightning-input>
+            </div>
+            <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12 slds-p-around_x-small">
+                <lightning-input type="date" name="openingTime" label="开放时间" value={searchFilter.openingTime} onchange={handleFilterInput}></lightning-input>
+            </div>
+            <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12 slds-p-around_x-small">
+                <lightning-input type="date" name="closingTime" label="关闭时间" value={searchFilter.closingTime} onchange={handleFilterInput}></lightning-input>
+            </div>
+            <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12 slds-p-around_x-small">
+                <lightning-input type="date" name="bookingStartTime" label="开始预约时间" value={searchFilter.bookingStartTime} onchange={handleFilterInput}></lightning-input>
+            </div>
+            <div class="slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12 slds-p-around_x-small">
+                <lightning-input type="date" name="bookingEndTime" label="停止预约时间" value={searchFilter.bookingEndTime} onchange={handleFilterInput}></lightning-input>
+            </div>
+        </div>
+        <div class="slds-align_absolute-center">
+            <lightning-button variant="brand" label="搜索" onclick={handleClickSearch} icon-name="utility:search" class="slds-p-around_x-small"></lightning-button>
+            <lightning-button variant="neutral" label="重置" onclick={handleClickReset} icon-name="utility:refresh" class="slds-p-around_x-small"></lightning-button>
+        </div>
+        <!-- 可预约信息 -->
+        <div class="container slds-is-relative">
+            <lightning-spinner alternative-text="Loading" variant="brand" if:true={isLoading}></lightning-spinner>
+            <div class="slds-grid slds-wrap">
+                <template for:each={availableBookingList} for:item="availableBooking">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12 slds-p-around_x-small" key={availableBooking.Id}>
+                        <lightning-card>
+                            <div slot="title">
+                                <span class="slds-m-right_xx-small">{availableBooking.CardTitle}</span>
+                                <lightning-badge label={availableBooking.timeStatus.label} class={availableBooking.timeStatus.class} if:true={availableBooking.timeStatus}></lightning-badge>
+                                <lightning-badge label={availableBooking.bookingStatus.label} class={availableBooking.bookingStatus.class} if:true={availableBooking.bookingStatus}></lightning-badge>
+                            </div>
+                            <lightning-button label="预约" slot="actions" data-id={availableBooking.Id} onclick={handleClickBooking}></lightning-button>
+                            <div class="slds-card__body_inner">
+                                <p class="slds-p-horizontal_small">可用设备：{availableBooking.LabEquipment__c}</p>
+                                <p class="slds-p-horizontal_small">开放时间：
+                                    <lightning-formatted-date-time value={availableBooking.OpeningTime__c} year="numeric" month="numeric" day="numeric" hour="numeric" minute="numeric" time-zone="Asia/Shanghai"></lightning-formatted-date-time>
+                                    &nbsp;-&nbsp;
+                                    <lightning-formatted-date-time value={availableBooking.ClosingTime__c} year="numeric" month="numeric" day="numeric" hour="numeric" minute="numeric" time-zone="Asia/Shanghai"></lightning-formatted-date-time>
+                                </p>
+                                <p class="slds-p-horizontal_small">可预约时间：
+                                    <lightning-formatted-date-time value={availableBooking.BookingStartTime__c} year="numeric" month="numeric" day="numeric" hour="numeric" minute="numeric" time-zone="Asia/Shanghai"></lightning-formatted-date-time>
+                                    &nbsp;-&nbsp;
+                                    <lightning-formatted-date-time value={availableBooking.BookingEndTime__c} year="numeric" month="numeric" day="numeric" hour="numeric" minute="numeric" time-zone="Asia/Shanghai"></lightning-formatted-date-time>
+                                </p>
+                                <p class="slds-p-horizontal_small">备注：{availableBooking.Remark__c}</p>
+                                <p class="slds-p-horizontal_small">已预约/容量：
+                                    <span class="slds-text-color_error" if:true={availableBooking.isFull}>
+                                        {availableBooking.BookedNumber__c} / {availableBooking.Capacity__c}
+                                    </span>
+                                    <span class="slds-text-color_success" if:false={availableBooking.isFull}>
+                                        {availableBooking.BookedNumber__c} / {availableBooking.Capacity__c}
+                                    </span>
+                                </p>
+                            </div>
+                        </lightning-card>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+    <!-- 分页组件 -->
+    <c-rs_pagination_cmn record-count={totalCounts} page-num={pageNum} page-size={pageSize} page-size-list={pageSizeList} onpagechange={handlePageChange}></c-rs_pagination_cmn>
+    <!-- 确认预约信息窗口 -->
+    <c-rs_dialog_cmn title="确认预约信息" size="small" theme="info" if:true={confirmBookingInfo.isShowConfirmDialog}>
+        <div class="slds-is-relative">
+            <lightning-spinner alternative-text="Loading" variant="brand" if:true={confirmBookingInfo.isLoading}></lightning-spinner>
+            <lightning-accordion allow-multiple-sections-open active-section-name={confirmBookingInfo.activeSections}>
+                <lightning-accordion-section name="labInfo" label="实验室信息">
+                    <div>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">地址</span>
+                                    <span class="slds-form-element__static">{confirmBookingInfo.lab.CardTitle}</span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">场地类别</span>
+                                    <span class="slds-form-element__static">{confirmBookingInfo.lab.LabType__c}</span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">实验室设备</span>
+                                    <span class="slds-form-element__static">{confirmBookingInfo.lab.LabEquipment__c}</span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">开放时间</span>
+                                    <span class="slds-form-element__static">
+                                        <lightning-formatted-date-time value={confirmBookingInfo.lab.OpeningTime__c} year="numeric" month="numeric" day="numeric" hour="numeric" minute="numeric" time-zone="Asia/Shanghai"></lightning-formatted-date-time>
+                                        &nbsp;-&nbsp;
+                                        <lightning-formatted-date-time value={confirmBookingInfo.lab.ClosingTime__c} year="numeric" month="numeric" day="numeric" hour="numeric" minute="numeric" time-zone="Asia/Shanghai"></lightning-formatted-date-time>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">可预约时间</span>
+                                    <span class="slds-form-element__static">
+                                        <lightning-formatted-date-time value={confirmBookingInfo.lab.BookingStartTime__c} year="numeric" month="numeric" day="numeric" hour="numeric" minute="numeric" time-zone="Asia/Shanghai"></lightning-formatted-date-time>
+                                        &nbsp;-&nbsp;
+                                        <lightning-formatted-date-time value={confirmBookingInfo.lab.BookingEndTime__c} year="numeric" month="numeric" day="numeric" hour="numeric" minute="numeric" time-zone="Asia/Shanghai"></lightning-formatted-date-time>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">审批人</span>
+                                    <span class="slds-form-element__static" if:true={confirmBookingInfo.lab.X1stApproverName}>
+                                        {confirmBookingInfo.lab.X1stApproverName}
+                                    </span>
+                                    <span class="slds-form-element__static slds-text-color_success" if:false={confirmBookingInfo.lab.X1stApproverName}>
+                                        无需审批
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </lightning-accordion-section>
+                <lightning-accordion-section name="userInfo" label="预约人信息">
+                    <div>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">姓名</span>
+                                    <span class="slds-form-element__static">{currentUserInfo.data.Contact.Name}</span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">学院</span>
+                                    <span class="slds-form-element__static">{currentUserInfo.data.Contact.Account.Parent.Name}</span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">班级</span>
+                                    <span class="slds-form-element__static">{currentUserInfo.data.Contact.ClassName__c}</span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">专业</span>
+                                    <span class="slds-form-element__static">{currentUserInfo.data.Contact.Profession__c}</span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">学号</span>
+                                    <span class="slds-form-element__static">{currentUserInfo.data.Contact.StudentNumber__c}</span>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element slds-form-element_stacked">
+                                    <span class="slds-form-element__label">电话</span>
+                                    <span class="slds-form-element__static">{currentUserInfo.data.Contact.Phone}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </lightning-accordion-section>
+            </lightning-accordion>
+        </div>
+        <div slot="footer">
+            <div>
+                <button class="slds-button slds-button_neutral" onclick={handleCancelConfirm}>取消</button>
+                <button class="slds-button slds-button_brand" onclick={handleConfirmedBooking}>确定</button>
+            </div>
+        </div>
+    </c-rs_dialog_cmn>
+    <!-- 
+    <div class="slds-is-relative">
+        <lightning-icon icon-name="utility:error" size="small" variant="error" class="slds-p-around_x-small slds-float_left" onclick={handleOpenErrorMessage} lwc:if={haveError}></lightning-icon>
+        <section class="popup-error slds-popover slds-popover_error slds-nubbin_bottom-left" role="dialog" lwc:if={errorInfo.isShow}>
+            <lightning-button-icon icon-name="utility:close" size="medium" class="slds-float_right slds-popover__close" variant="bare-inverse" onclick={handleCloseErrorMessage}></lightning-button-icon>
+            <header class="slds-popover__header">
+              <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+                <div class="slds-media__figure">
+                  <lightning-icon icon-name="utility:error" variant="inverse" size="x-small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                  <p class="slds-truncate slds-text-heading_small">Check for the following items</p>
+                </div>
+              </div>
+            </header>
+            <div class="slds-popover__body">
+              <ul class="slds-list_dotted">
+                <template for:each={errorInfo.errorList} for:item="errorMessage">
+                    <li key={errorMessage}>{errorMessage}</li>
+                </template>
+              </ul>
+            </div>
+        </section>
+    </div> -->
+</template>

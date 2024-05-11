@@ -1,0 +1,53 @@
+<template>
+    <lightning-card title="批准进度" >
+        <lightning-button-icon icon-name="utility:refresh" alternative-text="刷新" title="刷新" slot="actions" onclick={getApprovalProgress}></lightning-button-icon>
+        <div class="container slds-is-relative">
+            <lightning-spinner alternative-text="Loading" variant="brand" if:true={approvalProgress.isLoading}></lightning-spinner>
+            <lightning-progress-indicator current-step={approvalProgress.currentStep} type="path" variant="base">
+                <template for:each={approvalProgress.steps} for:item="step">
+                    <lightning-progress-step label={step.label} value={step.value} key={step.label} data-step={step.value} onclick={handleClickStep}></lightning-progress-step>
+                </template>
+            </lightning-progress-indicator>
+            <div class="slds-path__keys" if:true={approvalProgress.clickedStepDetail.isShow}>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <span class="slds-form-element__label">步骤</span>
+                            <span class="slds-form-element__static">{approvalProgress.clickedStepDetail.info.label}</span>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <span class="slds-form-element__label">状态</span>
+                            <span class="slds-form-element__static">{approvalProgress.clickedStepDetail.info.status}</span>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-form-element slds-form-element_stacked" if:true={approvalProgress.clickedStepDetail.info.originalApprover}>
+                            <span class="slds-form-element__label">分配审批人</span>
+                            <span class="slds-form-element__static">{approvalProgress.clickedStepDetail.info.originalApprover}</span>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-form-element slds-form-element_stacked" if:true={approvalProgress.clickedStepDetail.info.approver}>
+                            <span class="slds-form-element__label">实际操作人</span>
+                            <span class="slds-form-element__static">{approvalProgress.clickedStepDetail.info.approver}</span>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-form-element slds-form-element_stacked" if:true={approvalProgress.clickedStepDetail.info.time}>
+                            <span class="slds-form-element__label">时间</span>
+                            <span class="slds-form-element__static">{approvalProgress.clickedStepDetail.info.time}</span>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-form-element slds-form-element_stacked" if:true={approvalProgress.clickedStepDetail.info.comments}>
+                            <span class="slds-form-element__label">评论</span>
+                            <span class="slds-form-element__static">{approvalProgress.clickedStepDetail.info.comments}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>

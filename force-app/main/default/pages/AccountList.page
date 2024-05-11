@@ -1,0 +1,13 @@
+<apex:page controller="AccountCustomController">
+  <apex:form >
+    <apex:pageBlock title="客户列表" id="account_list">
+      <!-- accounts List -->
+      <apex:pageBlockTable value="{! accounts }" var="acc">
+        <apex:column value="{! acc.Name }" />
+        <apex:column value="{! acc.Phone }" />
+        <apex:column value="{! acc.BillingStreet }" />
+        <apex:column value="{! acc.Website }" />
+      </apex:pageBlockTable>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

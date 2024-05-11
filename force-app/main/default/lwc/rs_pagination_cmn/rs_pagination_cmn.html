@@ -1,0 +1,37 @@
+<template>
+    <div class="slds-grid slds-wrap vertical-center" if:true={recordCount}>
+        <!-- 总条数 -->
+        <span>共 {recordCount} 条</span>
+        <!-- 每页显示条数 -->
+        <lightning-combobox class="slds-m-horizontal_small" style="width:105px;" name="paginationSizes" placeholder=" 条/页" value={pageSizeText} options={pageSizes} onchange={handleSizeChange} variant="label-hidden"></lightning-combobox>
+        <!-- 页码按钮组 -->
+        <lightning-button-group>
+            <!-- 上一页 -->
+            <lightning-button-icon icon-name="utility:chevronleft" title="上一页" onclick={handlePagerClick} data-action="prevPage"></lightning-button-icon>
+            <!-- 第一页 -->
+            <lightning-button label="1" variant={firstPagerVariant} onclick={handlePagerClick} data-goto="1" if:true={showFirstPager}></lightning-button>
+            <!-- 向前更多 -->
+            <lightning-button-icon icon-name={pagerSetting.more.prevMoreIcon} if:true={pagerSetting.more.showPrevMore} 
+            onmouseenter={handleMoreIconMouseenter} onmouseleave={handleMoreIconMouseleave} onclick={handlePagerClick}
+            data-direction="left" data-action="prevMore"></lightning-button-icon>
+            <!-- 中间页 -->
+            <template for:each={pagerSetting.pagers} for:item="pager">
+                <lightning-button label={pager.index} key={pager.index} if:false={pager.isEdge} variant={pager.variant} onclick={handlePagerClick} data-goto={pager.index}></lightning-button>
+            </template>
+            <!-- 向后更多 -->
+            <lightning-button-icon icon-name={pagerSetting.more.nextMoreIcon} if:true={pagerSetting.more.showNextMore}
+            onmouseenter={handleMoreIconMouseenter} onmouseleave={handleMoreIconMouseleave} onclick={handlePagerClick}
+            data-direction="right" data-action="nextMore"></lightning-button-icon>
+            <!-- 最后一页 -->
+            <lightning-button label={pageCount} variant={lastPagerVariant} onclick={handlePagerClick} data-goto={pageCount} if:true={showLastPager}></lightning-button>
+            <!-- 下一页 -->
+            <lightning-button-icon icon-name="utility:chevronright" title="下一页" onclick={handlePagerClick} data-action="nextPage"></lightning-button-icon>
+        </lightning-button-group>
+        <!-- 输入页码前往 -->
+        <div class="slds-grid slds-wrap slds-m-horizontal_small vertical-center">
+            <span>前往</span>
+            <lightning-input class="slds-m-horizontal_xx-small" style="width:55px;" type="number" label="页码" variant="label-hidden" onkeyup={handleInputPageKeyup} onchange={handleInputPageChange}></lightning-input>
+            <span>页</span>
+        </div>
+    </div>
+</template>

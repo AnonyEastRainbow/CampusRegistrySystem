@@ -1,0 +1,12 @@
+.THIS {
+
+}
+
+.container{
+    margin-bottom: 10px;
+    min-height: 400px;
+}
+
+lightning-accordion {
+    --slds-c-accordion-sizing-border: 0px;
+}

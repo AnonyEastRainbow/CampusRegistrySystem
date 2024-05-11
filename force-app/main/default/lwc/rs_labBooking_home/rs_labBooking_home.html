@@ -1,0 +1,10 @@
+<template>
+    <lightning-tabset variant="scoped" class="slds-tabs_medium">
+        <lightning-tab label="实验室预约" onactive={handleAvailableBookingActive}>
+            <c-rs_lab-booking_available-booking-list></c-rs_lab-booking_available-booking-list>
+        </lightning-tab>
+        <lightning-tab label="我的预约" onactive={handleMyBookingActive}>
+            <c-rs_lab-booking_my-booking-list></c-rs_lab-booking_my-booking-list>
+        </lightning-tab>
+    </lightning-tabset>
+</template>

@@ -1,0 +1,34 @@
+<template>
+    <div>
+      <section role="dialog" tabindex="0" aria-modal="true" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="dialog-modal slds-modal slds-fade-in-open slds-modal_prompt">
+        <div class="slds-modal__container">
+          <div class="dialog-header slds-modal__header slds-theme_alert-texture">
+            <div class="slds-grid">
+              <div class="slds-col slds-size_1-of-8 slds-medium-size_1-of-12">
+                <div class="slds-float_left">
+                  <lightning-icon icon-name="action:placeholderIcon" style="padding: 0px;"></lightning-icon>
+                </div>
+              </div>
+              <div class="slds-col slds-size_6-of-8 slds-medium-size_10-of-12">
+                <slot name="title">
+                  <h1 class="slds-text-heading_medium" id="prompt-heading-id">{title}</h1>
+                </slot>
+              </div>
+              <div class="slds-col slds-size_1-of-8 slds-medium-size_1-of-12">
+                <div class="slds-float_right">
+                  <lightning-button-icon icon-name="utility:close" size="large" variant={closeButtonVariant} onclick={handleClose}></lightning-button-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="prompt-message-wrapper">
+            <slot></slot>
+          </div>
+          <div class="slds-modal__footer slds-theme_default">
+            <slot name="footer"></slot>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </div>
+</template>

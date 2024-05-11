@@ -1,0 +1,52 @@
+<template>
+    <!-- Start Header Label Passed from Parent -->
+    <template if:true={label}>
+        <label class="slds-form-element__label">{label}</label>
+    </template>
+    <!-- End Header Label Passed from Parent -->
+    <div class="slds-combobox_container">
+        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox" role="combobox">
+            <!-- Search Input -->
+            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                <lightning-input disabled={disabled} placeholder="" onblur={handleBlur} onclick={showOptions} onkeyup={filterOptions} value={searchString} variant="label-hidden"></lightning-input>
+                <lightning-icon class="slds-input__icon" icon-name="utility:down" size="x-small" alternative-text="downicon"></lightning-icon>
+            </div>
+            <!-- Dropdown List -->
+            <template lwc:if={showDropdown}>
+                <div class="slds-dropdown slds-dropdown_left slds-dropdown_length-with-icon-5 slds-dropdown_fluid">
+                    <ul class="slds-dropdown__list" role="menu">
+                        <template if:false={noResultMessage} >
+                            <template for:each={optionData} for:item="option">
+                                <li key={option.value} data-id={option.value} onmousedown={selectItem} class="slds-dropdown__item" if:true={option.isVisible}>
+                                    <a aria-checked="true" href="javascript:void(0)" role="menuitemcheckbox">
+                                        <span class="slds-truncate" title="Menu Item One">
+                                            <template lwc:if={option.selected}>
+                                                <lightning-icon icon-name="utility:check" size="x-small" alternative-text="icon" class="slds-m-right_x-small"></lightning-icon>
+                                            </template>
+                                            {option.label}
+                                        </span>
+                                    </a>
+                                </li>
+                            </template>
+                        </template>
+                        <template if:true={noResultMessage} >
+                            <li class="slds-dropdown__item">
+                                <a aria-checked="true" href="javascript:void(0)" role="menuitemcheckbox">
+                                    <span class="slds-truncate slds-m-left_xx-small">{noResultMessage}</span>
+                                </a>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </template>
+        </div>
+    </div>
+    <!-- Multi Select Pills -->
+    <template for:each={optionData} for:item="option">
+        <template if:true={option.selected}>
+            <lightning-pill label={option.label} key={option.value} name={option.value} onremove={closePill}>
+                <lightning-icon icon-name={pillIcon} alternative-text="Account"></lightning-icon>
+            </lightning-pill>
+        </template>
+    </template>
+</template>

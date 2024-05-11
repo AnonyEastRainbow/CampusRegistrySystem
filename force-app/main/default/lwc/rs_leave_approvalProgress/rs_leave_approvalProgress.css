@@ -1,0 +1,12 @@
+:host {
+    /* 路径样式设置 */
+    --lwc-colorBackgroundPathComplete: rgb(75, 202, 129);
+    --lwc-colorBackgroundPathActive: var(--lwc-brandAccessible);
+    --lwc-colorBackgroundPathLost: 	rgb(194, 57, 52);
+    /* 卡片Header */
+    /* --slds-c-card-header-spacing-block-start: 0px; */
+}
+
+.container {
+    padding: 10px;
+}

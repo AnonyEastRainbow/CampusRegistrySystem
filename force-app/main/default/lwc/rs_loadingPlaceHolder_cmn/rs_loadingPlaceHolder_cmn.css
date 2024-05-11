@@ -1,0 +1,51 @@
+.field {
+  padding: 1.5rem 1rem;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #d9dbdd;
+}
+.field-name {
+  width: 30%;
+  padding-right: 0.75rem;
+}
+
+.field-value {
+  width:70%;
+}
+
+.left-column, .right-column{
+  float: left;
+  display: block;
+  width: 50%;
+}
+.text {
+  border-radius: 15rem;
+  display: block;
+  margin-bottom: .75rem;
+  background-color: #f2f2f3;
+  height: .5rem;
+}
+.text-shorter {
+  width: 20%;
+}
+.text:last-child {
+  margin-bottom: 0;
+}
+.text-secondary {
+  background-color: #e9eaec;
+}
+.text-medium {
+  width: 60%;
+}
+.text {
+  border-radius: 15rem;
+  display: block;
+  margin-bottom: .75rem;
+  background-color: #f2f2f3;
+  height: .5rem;
+}
+.text-thin{
+  height:6px;
+  border-radius:var(--lwc-borderRadiusPill,15rem);
+}

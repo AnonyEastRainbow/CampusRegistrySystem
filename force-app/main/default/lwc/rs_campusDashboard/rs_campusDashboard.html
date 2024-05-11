@@ -1,0 +1,7 @@
+<template>
+    <lightning-card title="Open Opportunities" icon-name="utility:chart">
+        <template if:true={chartConfiguration}>
+            <c-rs_gen-echart_cmn chart-config={chartConfiguration}></c-rs_gen-echart_cmn>
+        </template>
+    </lightning-card>
+</template>

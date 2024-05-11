@@ -1,0 +1,8 @@
+<template>
+    <div class="slds-p-around_small slds-grid slds-grid--vertical-align-center slds-grid--align-center">
+        <div class="echart" style="height:400px;width:600px;padding:1%;border:1px;"></div>
+        <div if:false={isEchartsInitialized} class="slds-col--padded slds-size--1-of-1">
+            <lightning-spinner alternative-text="Loading" size="medium" variant="base"></lightning-spinner>
+        </div>
+    </div>
+</template>
