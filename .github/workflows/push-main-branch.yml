@@ -40,7 +40,7 @@ jobs:
             - name: 'Populate auth file with SFDX_URL secret of the integration and staging orgs'
               shell: bash
               run: |
-                  echo ${{ secrets.SFDX_PROD_ENV_URL}} > ./SFDX_PROD_ENV_URL.txt
+                  echo ${{ secrets.SFDX_PROD_ENV_URL}} > ./SFDX_PROD_ENV_URL.json
 
             - name: 'Create delta packages for new, modified or deleted metadata'
               run: | 
@@ -49,7 +49,7 @@ jobs:
 
             # Authenticate to org
             - name: 'Authenticate to Production Org'
-              run: sfdx auth:sfdxurl:store -f ./SFDX_PROD_ENV_URL.txt -s -a production
+              run: sfdx auth:sfdxurl:store -f ./SFDX_PROD_ENV_URL.json -s -a production
 
             - name: 'Deploy delta changes to Production org'
               run: sfdx force:source:deploy --sourcepath "./changed-sources/force-app" --json
