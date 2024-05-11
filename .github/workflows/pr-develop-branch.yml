@@ -85,8 +85,8 @@ jobs:
               # were using a normal env variable, its value would not be available outside this step.
               run: |
                   echo $PR_BODY > ./pr_body.txt
-                  node ./parsePR.js              
-                  TESTS=$(cat testsToRun.txt)       
+                  node ./cicd/parsePR.js
+                  TESTS=$(cat testsToRun.txt)
                   echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
                   
             # Now Install Salesforce CLI
