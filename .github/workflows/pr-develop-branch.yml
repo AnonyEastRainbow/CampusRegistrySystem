@@ -170,17 +170,23 @@ jobs:
             # If the env variable does not equal 'all', we know that there is a list of
             # tests that can be run
 
+            - name: 'Check-only deploy delta changes - skip tests'
+              if: ${{ env.APEX_TESTS == '' }}
+              run: |
+                  echo ${{env.APEX_TESTS}}
+                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --verbose
+            
             - name: 'Check-only deploy delta changes - run specified tests'
               if: ${{ env.APEX_TESTS != 'all' }}
               run: |
                   echo ${{env.APEX_TESTS}}
-                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --json
+                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --verbose
 
             # If the env variable equals all, we run all tests
             - name: 'Check-only deploy delta changes - run all tests'
               if: ${{ env.APEX_TESTS == 'all' }}
               run: |
-                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests  --json
+                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests --verbose
 
             - name: 'Deploy destructive changes (if any)'
               run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
