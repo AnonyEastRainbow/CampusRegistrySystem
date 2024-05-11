@@ -177,7 +177,7 @@ jobs:
                   sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --verbose
             
             - name: 'Check-only deploy delta changes - run specified tests'
-              if: ${{ env.APEX_TESTS != 'all' }}
+              if: ${{ env.APEX_TESTS != '' && env.APEX_TESTS != 'all' }}
               run: |
                   echo ${{env.APEX_TESTS}}
                   sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --verbose
