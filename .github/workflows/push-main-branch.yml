@@ -52,7 +52,7 @@ jobs:
               run: sfdx auth:sfdxurl:store -f ./SFDX_PROD_ENV_URL.json -s -a production
 
             - name: 'Deploy delta changes to Production org'
-              run: sfdx force:source:deploy --sourcepath "./changed-sources/force-app" --json
+              run: sfdx force:source:deploy --sourcepath "./changed-sources/force-app" --verbose
 
             - name: 'Deploy destructive changes (if any) to Production org'
               run: sfdx force:mdapi:deploy --deploydir "changed-sources/destructiveChanges" --checkonly --ignorewarnings 

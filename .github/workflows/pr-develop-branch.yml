@@ -1,5 +1,5 @@
 # Unique name for this workflow
-name: Validate PR on develop branch
+name: Validate PR on main branch
 
 # Definition when the workflow should run
 on:
@@ -11,7 +11,7 @@ on:
       # The branches filter allows to specify that this workflow should only
       # run if the branch name is "develop". This way we prevent this workflow
       # from running when PRs are opened on other branches
-      branches: [ develop ]
+      branches: [ main ]
       # We only care about changes to the force-app directory, which is the
       # root directory of the sfdx project. This prevents the job from running
       # when changing non-salesforce files (like this yml file).
@@ -84,9 +84,9 @@ jobs:
               # as this allows us to reference the list in a subsequent step.  If you
               # were using a normal env variable, its value would not be available outside this step.
               run: |
-                  echo $PR_BODY > ./pr_body.txt
-                  node ./parsePR.js              
-                  TESTS=$(cat testsToRun.txt)       
+                  echo $PR_BODY > ./cicd/pr_body.txt
+                  node ./cicd/parsePR.js
+                  TESTS=$(cat ./cicd/testsToRun.txt)
                   echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
                   
             # Now Install Salesforce CLI
@@ -170,17 +170,23 @@ jobs:
             # If the env variable does not equal 'all', we know that there is a list of
             # tests that can be run
 
-            - name: 'Check-only deploy delta changes - run specified tests'
-              if: ${{ env.APEX_TESTS != 'all' }}
+            - name: 'Check-only deploy delta changes - skip tests'
+              if: ${{ env.APEX_TESTS == '' }}
               run: |
                   echo ${{env.APEX_TESTS}}
-                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --json
+                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --verbose
+            
+            - name: 'Check-only deploy delta changes - run specified tests'
+              if: ${{ env.APEX_TESTS != '' && env.APEX_TESTS != 'all' }}
+              run: |
+                  echo ${{env.APEX_TESTS}}
+                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --verbose
 
             # If the env variable equals all, we run all tests
             - name: 'Check-only deploy delta changes - run all tests'
               if: ${{ env.APEX_TESTS == 'all' }}
               run: |
-                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests  --json
+                  sfdx force:source:deploy -p "changed-sources/force-app" --checkonly --testlevel RunLocalTests --verbose
 
             - name: 'Deploy destructive changes (if any)'
               run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
