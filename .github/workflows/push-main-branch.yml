@@ -40,7 +40,7 @@ jobs:
             - name: 'Populate auth file with SFDX_URL secret of the integration and staging orgs'
               shell: bash
               run: |
-                  echo ${{ secrets.SFDX_PROD_ENV_URL}} > ./SFDX_PROD_ENV_URL.json
+                  echo "${{ secrets.SFDX_PROD_ENV_URL}}" > ./SFDX_PROD_ENV_URL.json
 
             - name: 'Create delta packages for new, modified or deleted metadata'
               run: | 
