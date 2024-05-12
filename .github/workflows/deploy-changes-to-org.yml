@@ -11,7 +11,7 @@ on:
 
 # Jobs to be executed
 jobs:
-    deploy-sit-branch-to-sit-org:
+    deploy-changed-sources-to-org:
         runs-on: ubuntu-latest
         if: ${{ github.actor != 'dependabot[bot]' }}
         steps:
@@ -38,19 +38,19 @@ jobs:
 
             # Store auth file for org
             - name: 'Populate auth file(SIT)'
-              if: ${{ env.GITHUB_BASE_REF == 'SIT' }}
+              if: ${{ github.ref_name == 'SIT' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_SIT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
             - name: 'Populate auth file(UAT)'
-              if: ${{ env.GITHUB_BASE_REF == 'UAT' }}
+              if: ${{ github.ref_name == 'UAT' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_UAT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
             - name: 'Populate auth file(PreProd)'
-              if: ${{ env.GITHUB_BASE_REF == 'PreProd' }}
+              if: ${{ github.ref_name == 'PreProd' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
@@ -67,7 +67,7 @@ jobs:
 
             # Upload delta packages to Artifact for download
             - name: Upload delta packages to Artifact
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v4
               with:
                 name: changed-sources-package
                 path: changed-sources/
