@@ -33,7 +33,7 @@ jobs:
             # Now we install nodejs in the VM, and specify version 18
             - uses: actions/setup-node@v3
               with:
-                node-version: '18'
+                node-version: '20'
 
             # The idea is that the VM can access your remote repository
             # because your repository is an sfdx project.
@@ -128,19 +128,19 @@ jobs:
             # The URL is stored in the Github Secret named SFDX_SIT_ENV_AUTH
             # so here we store the URL into a text file
             - name: 'Populate auth file(SIT)'
-              if: ${{ env.GITHUB_BASE_REF == 'SIT' }}
+              if: ${{ github.base_ref == 'SIT' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_SIT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
             - name: 'Populate auth file(UAT)'
-              if: ${{ env.GITHUB_BASE_REF == 'UAT' }}
+              if: ${{ github.base_ref == 'UAT' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_UAT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
             - name: 'Populate auth file(PreProd)'
-              if: ${{ env.GITHUB_BASE_REF == 'PreProd' }}
+              if: ${{ github.base_ref == 'PreProd' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
