@@ -33,7 +33,7 @@ jobs:
             # Now we install nodejs in the VM, and specify version 18
             - uses: actions/setup-node@v3
               with:
-                node-version: '18'
+                node-version: '20'
 
             # The idea is that the VM can access your remote repository
             # because your repository is an sfdx project.
