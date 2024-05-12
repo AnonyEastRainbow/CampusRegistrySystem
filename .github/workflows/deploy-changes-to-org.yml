@@ -1,17 +1,17 @@
 # Unique name for this workflow
-name: Deploy main branch to production org
+name: Deploy changed sources to org
 
 # Definition when the workflow should run
 on:
     push:
-      branches: [ main ]
+      branches: [ SIT, UAT, PreProd ]
       paths:
         - 'force-app/**'
             
 
 # Jobs to be executed
 jobs:
-    deploy-branch-to-production-org:
+    deploy-sit-branch-to-sit-org:
         runs-on: ubuntu-latest
         if: ${{ github.actor != 'dependabot[bot]' }}
         steps:
@@ -36,23 +36,45 @@ jobs:
               with:
                 fetch-depth: 0
 
-            # Store secret for production org
-            - name: 'Populate auth file with SFDX_URL secret of the integration and staging orgs'
+            # Store auth file for org
+            - name: 'Populate auth file(SIT)'
+              if: ${{ env.GITHUB_BASE_REF == 'SIT' }}
               shell: bash
               run: |
-                  echo "${{ secrets.SFDX_PROD_ENV_URL}}" > ./SFDX_PROD_ENV_URL.json
+                  echo "${{ secrets.SFDX_SIT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
+            - name: 'Populate auth file(UAT)'
+              if: ${{ env.GITHUB_BASE_REF == 'UAT' }}
+              shell: bash
+              run: |
+                  echo "${{ secrets.SFDX_UAT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+
+            - name: 'Populate auth file(PreProd)'
+              if: ${{ env.GITHUB_BASE_REF == 'PreProd' }}
+              shell: bash
+              run: |
+                  echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+
+            # Authenticate to org
+            - name: 'Authenticate to org'
+              run: sfdx auth:sfdxurl:store --sfdxurlfile ./SFDX_ENV_AUTH.json --setdefaultusername
+
+            # Use SFDX Git Delta to create a directory with only the metadata that has changed.
             - name: 'Create delta packages for new, modified or deleted metadata'
               run: | 
                   mkdir changed-sources
                   sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
-            # Authenticate to org
-            - name: 'Authenticate to Production Org'
-              run: sfdx auth:sfdxurl:store -f ./SFDX_PROD_ENV_URL.json -s -a production
+            # Upload delta packages to Artifact for download
+            - name: Upload delta packages to Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                name: changed-sources-package
+                path: changed-sources/
 
-            - name: 'Deploy delta changes to Production org'
+            # Deploy delta changes to org
+            - name: 'Deploy delta changes to org'
               run: sfdx force:source:deploy --sourcepath "./changed-sources/force-app" --verbose
 
-            - name: 'Deploy destructive changes (if any) to Production org'
+            - name: 'Deploy destructive changes (if any) to org'
               run: sfdx force:mdapi:deploy --deploydir "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
