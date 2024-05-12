@@ -38,19 +38,19 @@ jobs:
 
             # Store auth file for org
             - name: 'Populate auth file(SIT)'
-              if: ${{ github.base_ref == 'SIT' }}
+              if: ${{ github.ref_name == 'SIT' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_SIT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
             - name: 'Populate auth file(UAT)'
-              if: ${{ github.base_ref == 'UAT' }}
+              if: ${{ github.ref_name == 'UAT' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_UAT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
             - name: 'Populate auth file(PreProd)'
-              if: ${{ github.base_ref == 'PreProd' }}
+              if: ${{ github.ref_name == 'PreProd' }}
               shell: bash
               run: |
                   echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
