@@ -67,7 +67,7 @@ jobs:
 
             # Upload delta packages to Artifact for download
             - name: Upload delta packages to Artifact
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v4
               with:
                 name: changed-sources-package
                 path: changed-sources/
