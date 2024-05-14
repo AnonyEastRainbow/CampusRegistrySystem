@@ -14,19 +14,16 @@ jobs:
   deploy-changed-sources-to-org:
     name: Deploy changed sources to org
     runs-on: ubuntu-latest
-    # Run Salesforce CLI Using a Docker Image
-    container:
-      image: salesforce/salesforcedx:latest-full
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       # Install Salesforce CLI
-      # - name: 'Install Salesforce CLI'
-      #   run: |
-      #     wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-      #     mkdir ~/sfdx
-      #     tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-      #     echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-      #     ~/sfdx/bin/sfdx version
+      - name: 'Install Salesforce CLI'
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+          mkdir ~/sfdx
+          tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+          echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+          ~/sfdx/bin/sfdx version
 
       # install SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
       - name: 'Installing sfdx git delta'

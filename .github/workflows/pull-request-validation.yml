@@ -7,7 +7,7 @@ on:
   pull_request:
     # The events are that a PR is opened, or when a commit is pushed
     # to a branch that has an existing pull request
-    types: [ opened, synchronize ]
+    types: [ opened, edited, synchronize, reopened ]
     # The branches filter allows to specify that this workflow should only
     # run if the branch name is "develop". This way we prevent this workflow
     # from running when PRs are opened on other branches
@@ -29,9 +29,6 @@ jobs:
     # In this case, we are going to run our commands on the latest version
     # of ubuntu
     runs-on: ubuntu-latest
-    # Run Salesforce CLI Using a Docker Image
-    container:
-      image: salesforce/salesforcedx:latest-full
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
       # Now we install nodejs in the VM, and specify version 20
@@ -94,13 +91,13 @@ jobs:
           echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
 
       # Now Install Salesforce CLI
-      # - name: 'Install Salesforce CLI'
-      #   run: |
-      #     wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-      #     mkdir ~/sfdx
-      #     tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-      #     echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-      #     ~/sfdx/bin/sfdx version
+      - name: 'Install Salesforce CLI'
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+          mkdir ~/sfdx
+          tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+          echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+          ~/sfdx/bin/sfdx version
 
       # Then we install the SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
       # This is an awesome plugin that allows us to extract a package.xml with the metadata
