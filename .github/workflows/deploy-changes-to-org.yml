@@ -47,12 +47,12 @@ jobs:
       
       # Read Pull Request Body
       - name: 'Read pull request body'
-        if: ${{ fromJson(steps.get_pr_data.outputs.result[0]) }}
+        if: ${{ fromJson(steps.get_pr_data.outputs.result)[0] }}
         env:
-          PR_BODY: ${{ fromJson(steps.get_pr_data.outputs.result[0]).body }}
+          PR_BODY: ${{ fromJson(steps.get_pr_data.outputs.result)[0].body }}
         run: |
-          echo 'PR number: ${{ fromJson(steps.get_pr_data.outputs.result[0]).number }}'
-          echo 'PR title: ${{ fromJson(steps.get_pr_data.outputs.result[0]).title }}'
+          echo 'PR number: ${{ fromJson(steps.get_pr_data.outputs.result)[0].number }}'
+          echo 'PR title: ${{ fromJson(steps.get_pr_data.outputs.result)[0].title }}'
           echo 'PR body: ${{ env.PR_BODY }}'
           echo $PR_BODY > ./cicd/pr_body.txt
           node ./cicd/parsePR.js
