@@ -33,7 +33,7 @@ jobs:
     steps:
       # Now we install node.js in the VM, and specify version 20
       - name: 'Setup node.js version'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
@@ -50,7 +50,7 @@ jobs:
       # to the destination org
 
       - name: 'Checkout source code'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
