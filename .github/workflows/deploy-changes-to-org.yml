@@ -16,6 +16,46 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
+      # Install node.js in the VM, and specify version 20
+      - name: 'Setup node.js version'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Checkout the source code
+      - name: 'Checkout source code'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Get pull request data associated with current commit
+      - name: 'Get pull request data associated with current commit'
+        uses: actions/github-script@v6
+        id: get_pr_data
+        with:
+          script: |
+              return (
+                await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                  commit_sha: context.sha,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                })
+              ).data[0];
+      
+      # Read Pull Request Body
+      - name: 'Read pull request body'
+        env:
+          PR_BODY: ${{ fromJson(steps.get_pr_data.outputs.result).body }}
+        run: |
+          echo 'PR number: ${{ fromJson(steps.get_pr_data.outputs.result).number }}'
+          echo 'PR title: ${{ fromJson(steps.get_pr_data.outputs.result).title }}'
+          echo 'PR body: ${{ env.PR_BODY }}'
+
+          echo $PR_BODY > ./cicd/pr_body.txt
+          node ./cicd/parsePR.js
+          TESTS=$(cat ./cicd/testsToRun.txt)
+          echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
+
       # Install Salesforce CLI
       - name: 'Install Salesforce CLI'
         run: |
@@ -26,16 +66,11 @@ jobs:
           ~/sfdx/bin/sfdx version
 
       # install SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
-      - name: 'Installing sfdx git delta'
+      - name: 'Install sfdx git delta'
         run: |
           echo y | sfdx plugins:install sfdx-git-delta
           sfdx plugins 
 
-      # Checkout the source code
-      - name: 'Checkout source code'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       # Store auth file for org
       - name: 'Populate auth file(SIT)'
