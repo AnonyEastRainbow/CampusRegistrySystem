@@ -4,7 +4,7 @@ name: Deploy changed sources to org
 # Definition when the workflow should run
 on:
   push:
-    branches: [ SIT, UAT, PreProd ]
+    branches: [ SIT, UAT, PreProd, main ]
     paths:
       - 'force-app/**'
 
@@ -43,15 +43,16 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                 })
-              ).data[0];
+              ).data;
       
       # Read Pull Request Body
       - name: 'Read pull request body'
+        if: ${{ fromJson(steps.get_pr_data.outputs.result)[0] }}
         env:
-          PR_BODY: ${{ fromJson(steps.get_pr_data.outputs.result).body }}
+          PR_BODY: ${{ fromJson(steps.get_pr_data.outputs.result)[0].body }}
         run: |
-          echo 'PR number: ${{ fromJson(steps.get_pr_data.outputs.result).number }}'
-          echo 'PR title: ${{ fromJson(steps.get_pr_data.outputs.result).title }}'
+          echo 'PR number: ${{ fromJson(steps.get_pr_data.outputs.result)[0].number }}'
+          echo 'PR title: ${{ fromJson(steps.get_pr_data.outputs.result)[0].title }}'
           echo 'PR body: ${{ env.PR_BODY }}'
           echo $PR_BODY > ./cicd/pr_body.txt
           node ./cicd/parsePR.js
@@ -93,6 +94,12 @@ jobs:
         run: |
           echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
+      - name: 'Populate auth file(Production)'
+        if: ${{ github.ref_name == 'main' }}
+        shell: bash
+        run: |
+          echo "${{ secrets.SFDX_Prod_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+
       # Authenticate to org
       - name: 'Authenticate to org'
         run: sfdx auth:sfdxurl:store --sfdxurlfile ./SFDX_ENV_AUTH.json --setdefaultusername
@@ -114,13 +121,12 @@ jobs:
       - name: 'Deploy delta changes to org - skip tests'
         if: ${{ env.APEX_TESTS == '' }}
         run: |
-          echo ${{env.APEX_TESTS}}
           sfdx force:source:deploy --sourcepath "changed-sources/force-app" --verbose
 
       - name: 'Deploy delta changes to org - run specified tests'
         if: ${{ env.APEX_TESTS != '' && env.APEX_TESTS != 'all' }}
         run: |
-          echo ${{env.APEX_TESTS}}
+          echo 'Tests to run: ${{env.APEX_TESTS}}'
           sfdx force:source:deploy --sourcepath "changed-sources/force-app" --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --verbose
 
       # If the env variable equals all, we run all tests
