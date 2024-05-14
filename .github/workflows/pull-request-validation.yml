@@ -142,7 +142,7 @@ jobs:
           echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
       - name: 'Populate auth file(Production)'
-        if: ${{ github.ref_name == 'main' }}
+        if: ${{ github.base_ref == 'main' }}
         shell: bash
         run: |
           echo "${{ secrets.SFDX_Prod_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
