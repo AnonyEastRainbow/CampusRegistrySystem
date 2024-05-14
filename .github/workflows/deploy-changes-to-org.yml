@@ -4,7 +4,7 @@ name: Deploy changed sources to org
 # Definition when the workflow should run
 on:
   push:
-    branches: [ SIT, UAT, PreProd ]
+    branches: [ SIT, UAT, PreProd, main ]
     paths:
       - 'force-app/**'
 
@@ -15,7 +15,50 @@ jobs:
     name: Deploy changed sources to org
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' }}
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
+      # Install node.js in the VM, and specify version 20
+      - name: 'Setup node.js version'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Checkout the source code
+      - name: 'Checkout source code'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Get pull request data associated with current commit
+      - name: 'Get pull request data associated with current commit'
+        uses: actions/github-script@v7
+        id: get_pr_data
+        with:
+          script: |
+              return (
+                await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                  commit_sha: context.sha,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                })
+              ).data;
+      
+      # Read Pull Request Body
+      - name: 'Read pull request body'
+        if: ${{ fromJson(steps.get_pr_data.outputs.result)[0] }}
+        env:
+          PR_BODY: ${{ fromJson(steps.get_pr_data.outputs.result)[0].body }}
+        run: |
+          echo 'PR number: ${{ fromJson(steps.get_pr_data.outputs.result)[0].number }}'
+          echo 'PR title: ${{ fromJson(steps.get_pr_data.outputs.result)[0].title }}'
+          echo 'PR body: ${{ env.PR_BODY }}'
+          echo $PR_BODY > ./cicd/pr_body.txt
+          node ./cicd/parsePR.js
+          TESTS=$(cat ./cicd/testsToRun.txt)
+          echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
+
       # Install Salesforce CLI
       - name: 'Install Salesforce CLI'
         run: |
@@ -26,16 +69,11 @@ jobs:
           ~/sfdx/bin/sfdx version
 
       # install SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
-      - name: 'Installing sfdx git delta'
+      - name: 'Install sfdx git delta'
         run: |
           echo y | sfdx plugins:install sfdx-git-delta
           sfdx plugins 
 
-      # Checkout the source code
-      - name: 'Checkout source code'
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       # Store auth file for org
       - name: 'Populate auth file(SIT)'
@@ -56,6 +94,12 @@ jobs:
         run: |
           echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
+      - name: 'Populate auth file(Production)'
+        if: ${{ github.ref_name == 'main' }}
+        shell: bash
+        run: |
+          echo "${{ secrets.SFDX_Prod_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+
       # Authenticate to org
       - name: 'Authenticate to org'
         run: sfdx auth:sfdxurl:store --sfdxurlfile ./SFDX_ENV_AUTH.json --setdefaultusername
@@ -74,8 +118,22 @@ jobs:
           path: changed-sources/
 
       # Deploy delta changes to org
-      - name: 'Deploy delta changes to org'
-        run: sfdx force:source:deploy --sourcepath "./changed-sources/force-app" --verbose
+      - name: 'Deploy delta changes to org - skip tests'
+        if: ${{ env.APEX_TESTS == '' }}
+        run: |
+          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --verbose
 
+      - name: 'Deploy delta changes to org - run specified tests'
+        if: ${{ env.APEX_TESTS != '' && env.APEX_TESTS != 'all' }}
+        run: |
+          echo 'Tests to run: ${{env.APEX_TESTS}}'
+          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --verbose
+
+      # If the env variable equals all, we run all tests
+      - name: 'Deploy delta changes to org - run all tests'
+        if: ${{ env.APEX_TESTS == 'all' }}
+        run: |
+          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --testlevel RunLocalTests --verbose
+      
       - name: 'Deploy destructive changes (if any) to org'
-        run: sfdx force:mdapi:deploy --deploydir "changed-sources/destructiveChanges" --checkonly --ignorewarnings
+        run: sfdx force:mdapi:deploy --deploydir "changed-sources/destructiveChanges" --ignorewarnings
