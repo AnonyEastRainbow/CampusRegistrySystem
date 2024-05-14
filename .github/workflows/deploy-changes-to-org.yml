@@ -3,78 +3,79 @@ name: Deploy changed sources to org
 
 # Definition when the workflow should run
 on:
-    push:
-      branches: [ SIT, UAT, PreProd ]
-      paths:
-        - 'force-app/**'
-            
+  push:
+    branches: [ SIT, UAT, PreProd ]
+    paths:
+      - 'force-app/**'
+
 
 # Jobs to be executed
 jobs:
-    deploy-changed-sources-to-org:
-        runs-on: ubuntu-latest
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        steps:
-            # Install Salesforce CLI
-            - name: 'Install Salesforce CLI'
-              run: |
-                  wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-                  mkdir ~/sfdx
-                  tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-                  echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-                  ~/sfdx/bin/sfdx version
+  deploy-changed-sources-to-org:
+    name: Deploy changed sources to org
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      # Install Salesforce CLI
+      - name: 'Install Salesforce CLI'
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+          mkdir ~/sfdx
+          tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+          echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+          ~/sfdx/bin/sfdx version
 
-            # install SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
-            - name: 'Installing sfdx git delta'
-              run: | 
-                  echo y | sfdx plugins:install sfdx-git-delta
-                  sfdx plugins 
+      # install SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
+      - name: 'Installing sfdx git delta'
+        run: |
+          echo y | sfdx plugins:install sfdx-git-delta
+          sfdx plugins 
 
-            # Checkout the source code
-            - name: 'Checkout source code'
-              uses: actions/checkout@v3
-              with:
-                fetch-depth: 0
+      # Checkout the source code
+      - name: 'Checkout source code'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-            # Store auth file for org
-            - name: 'Populate auth file(SIT)'
-              if: ${{ github.ref_name == 'SIT' }}
-              shell: bash
-              run: |
-                  echo "${{ secrets.SFDX_SIT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+      # Store auth file for org
+      - name: 'Populate auth file(SIT)'
+        if: ${{ github.ref_name == 'SIT' }}
+        shell: bash
+        run: |
+          echo "${{ secrets.SFDX_SIT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
-            - name: 'Populate auth file(UAT)'
-              if: ${{ github.ref_name == 'UAT' }}
-              shell: bash
-              run: |
-                  echo "${{ secrets.SFDX_UAT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+      - name: 'Populate auth file(UAT)'
+        if: ${{ github.ref_name == 'UAT' }}
+        shell: bash
+        run: |
+          echo "${{ secrets.SFDX_UAT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
-            - name: 'Populate auth file(PreProd)'
-              if: ${{ github.ref_name == 'PreProd' }}
-              shell: bash
-              run: |
-                  echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+      - name: 'Populate auth file(PreProd)'
+        if: ${{ github.ref_name == 'PreProd' }}
+        shell: bash
+        run: |
+          echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
 
-            # Authenticate to org
-            - name: 'Authenticate to org'
-              run: sfdx auth:sfdxurl:store --sfdxurlfile ./SFDX_ENV_AUTH.json --setdefaultusername
+      # Authenticate to org
+      - name: 'Authenticate to org'
+        run: sfdx auth:sfdxurl:store --sfdxurlfile ./SFDX_ENV_AUTH.json --setdefaultusername
 
-            # Use SFDX Git Delta to create a directory with only the metadata that has changed.
-            - name: 'Create delta packages for new, modified or deleted metadata'
-              run: | 
-                  mkdir changed-sources
-                  sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
+      # Use SFDX Git Delta to create a directory with only the metadata that has changed.
+      - name: 'Create delta packages for new, modified or deleted metadata'
+        run: |
+          mkdir changed-sources
+          sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
-            # Upload delta packages to Artifact for download
-            - name: Upload delta packages to Artifact
-              uses: actions/upload-artifact@v4
-              with:
-                name: changed-sources-package
-                path: changed-sources/
+      # Upload delta packages to Artifact for download
+      - name: Upload delta packages to Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: changed-sources-package
+          path: changed-sources/
 
-            # Deploy delta changes to org
-            - name: 'Deploy delta changes to org'
-              run: sfdx force:source:deploy --sourcepath "./changed-sources/force-app" --verbose
+      # Deploy delta changes to org
+      - name: 'Deploy delta changes to org'
+        run: sfdx force:source:deploy --sourcepath "./changed-sources/force-app" --verbose
 
-            - name: 'Deploy destructive changes (if any) to org'
-              run: sfdx force:mdapi:deploy --deploydir "changed-sources/destructiveChanges" --checkonly --ignorewarnings 
+      - name: 'Deploy destructive changes (if any) to org'
+        run: sfdx force:mdapi:deploy --deploydir "changed-sources/destructiveChanges" --checkonly --ignorewarnings
