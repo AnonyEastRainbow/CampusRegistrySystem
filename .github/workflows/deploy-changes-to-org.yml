@@ -74,25 +74,25 @@ jobs:
         if: ${{ github.ref_name == 'SIT' }}
         shell: bash
         run: |
-          echo "${{ secrets.SFDX_SIT_ORG_AUTH }}" > ./SFDX_ORG_AUTH.json
+          echo '${{ secrets.SFDX_SIT_ORG_AUTH }}' > ./SFDX_ORG_AUTH.json
 
       - name: 'Populate auth file(UAT)'
         if: ${{ github.ref_name == 'UAT' }}
         shell: bash
         run: |
-          echo "${{ secrets.SFDX_UAT_ORG_AUTH }}" > ./SFDX_ORG_AUTH.json
+          echo '${{ secrets.SFDX_UAT_ORG_AUTH }}' > ./SFDX_ORG_AUTH.json
 
       - name: 'Populate auth file(PreProd)'
         if: ${{ github.ref_name == 'PreProd' }}
         shell: bash
         run: |
-          echo "${{ secrets.SFDX_PreProd_ORG_AUTH }}" > ./SFDX_ORG_AUTH.json
+          echo '${{ secrets.SFDX_PreProd_ORG_AUTH }}' > ./SFDX_ORG_AUTH.json
 
       - name: 'Populate auth file(Production)'
         if: ${{ github.ref_name == 'main' }}
         shell: bash
         run: |
-          echo "${{ secrets.SFDX_Prod_ORG_AUTH }}" > ./SFDX_ORG_AUTH.json
+          echo '${{ secrets.SFDX_Prod_ORG_AUTH }}' > ./SFDX_ORG_AUTH.json
 
       # Authenticate to org
       - name: 'Authenticate to org'
