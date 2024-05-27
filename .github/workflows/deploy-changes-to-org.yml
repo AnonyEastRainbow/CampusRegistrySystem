@@ -31,8 +31,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Get pull request data associated with current commit
-      - name: 'Get pull request data associated with current commit'
+      # Query Pull Requests associated with current commit by GitHub API
+      - name: 'Query Pull Requests associated with current commit by GitHub API'
         uses: actions/github-script@v7
         id: get_pr_data
         with:
@@ -45,64 +45,65 @@ jobs:
                 })
               ).data;
       
-      # Read Pull Request Body
-      - name: 'Read pull request body'
+      # Parse test classes to run
+      - name: 'Parse test classes to run from Pull Request description'
         if: ${{ fromJson(steps.get_pr_data.outputs.result)[0] }}
         env:
           PR_BODY: ${{ fromJson(steps.get_pr_data.outputs.result)[0].body }}
         run: |
-          echo 'PR number: ${{ fromJson(steps.get_pr_data.outputs.result)[0].number }}'
-          echo 'PR title: ${{ fromJson(steps.get_pr_data.outputs.result)[0].title }}'
-          echo 'PR body: ${{ env.PR_BODY }}'
+          echo Pull Request number: ${{ fromJson(steps.get_pr_data.outputs.result)[0].number }}
+          echo Pull Request title: ${{ fromJson(steps.get_pr_data.outputs.result)[0].title }}
+          echo Pull Request description: $PR_BODY
           echo $PR_BODY > ./cicd/pr_body.txt
           node ./cicd/parsePR.js
-          TESTS=$(cat ./cicd/testsToRun.txt)
-          echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
+          testsToRun=$(cat ./cicd/testsToRun.txt)
+          echo Tests to run: $testsToRun
+          echo "apexTestsToRun=$testsToRun" >> $GITHUB_ENV
 
       # Install Salesforce CLI
       - name: 'Install Salesforce CLI'
         run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-          mkdir ~/sfdx
-          tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-          echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-          ~/sfdx/bin/sfdx version
-
-      # install SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
-      - name: 'Install sfdx git delta'
-        run: |
-          echo y | sfdx plugins:install sfdx-git-delta
-          sfdx plugins 
-
+          wget https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
+          mkdir -p ~/cli/sf
+          tar xJf sf-linux-x64.tar.xz -C ~/cli/sf --strip-components 1
+          echo "~/cli/sf/bin" >> $GITHUB_PATH
+          ~/cli/sf/bin/sf version
 
       # Store auth file for org
       - name: 'Populate auth file(SIT)'
         if: ${{ github.ref_name == 'SIT' }}
         shell: bash
         run: |
-          echo "${{ secrets.SFDX_SIT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+          echo '${{ secrets.SFDX_SIT_ORG_AUTH }}' > ./SFDX_ORG_AUTH.json
 
       - name: 'Populate auth file(UAT)'
         if: ${{ github.ref_name == 'UAT' }}
         shell: bash
         run: |
-          echo "${{ secrets.SFDX_UAT_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+          echo '${{ secrets.SFDX_UAT_ORG_AUTH }}' > ./SFDX_ORG_AUTH.json
 
       - name: 'Populate auth file(PreProd)'
         if: ${{ github.ref_name == 'PreProd' }}
         shell: bash
         run: |
-          echo "${{ secrets.SFDX_PreProd_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+          echo '${{ secrets.SFDX_PreProd_ORG_AUTH }}' > ./SFDX_ORG_AUTH.json
 
       - name: 'Populate auth file(Production)'
         if: ${{ github.ref_name == 'main' }}
         shell: bash
         run: |
-          echo "${{ secrets.SFDX_Prod_ENV_AUTH }}" > ./SFDX_ENV_AUTH.json
+          echo '${{ secrets.SFDX_Prod_ORG_AUTH }}' > ./SFDX_ORG_AUTH.json
 
       # Authenticate to org
       - name: 'Authenticate to org'
-        run: sfdx auth:sfdxurl:store --sfdxurlfile ./SFDX_ENV_AUTH.json --setdefaultusername
+        run: sfdx auth:sfdxurl:store --sfdxurlfile ./SFDX_ORG_AUTH.json --setdefaultusername
+
+      # Install SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
+      - name: 'Install sfdx git delta'
+        run: |
+          sfdx version
+          echo y | sfdx plugins:install sfdx-git-delta
+          sfdx plugins
 
       # Use SFDX Git Delta to create a directory with only the metadata that has changed.
       - name: 'Create delta packages for new, modified or deleted metadata'
@@ -119,21 +120,17 @@ jobs:
 
       # Deploy delta changes to org
       - name: 'Deploy delta changes to org - skip tests'
-        if: ${{ env.APEX_TESTS == '' }}
+        if: ${{ env.apexTestsToRun == '' }}
         run: |
           sfdx force:source:deploy --sourcepath "changed-sources/force-app" --verbose
 
       - name: 'Deploy delta changes to org - run specified tests'
-        if: ${{ env.APEX_TESTS != '' && env.APEX_TESTS != 'all' }}
+        if: ${{ env.apexTestsToRun != '' && env.apexTestsToRun != 'all' }}
         run: |
-          echo 'Tests to run: ${{env.APEX_TESTS}}'
-          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --verbose
+          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --testlevel RunSpecifiedTests --runtests ${{env.apexTestsToRun}} --verbose
 
       # If the env variable equals all, we run all tests
       - name: 'Deploy delta changes to org - run all tests'
-        if: ${{ env.APEX_TESTS == 'all' }}
+        if: ${{ env.apexTestsToRun == 'all' }}
         run: |
           sfdx force:source:deploy --sourcepath "changed-sources/force-app" --testlevel RunLocalTests --verbose
-      
-      - name: 'Deploy destructive changes (if any) to org'
-        run: sfdx force:mdapi:deploy --deploydir "changed-sources/destructiveChanges" --ignorewarnings
