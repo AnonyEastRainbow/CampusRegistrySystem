@@ -53,7 +53,7 @@ jobs:
         run: |
           echo Pull Request number: ${{ fromJson(steps.get_pr_data.outputs.result)[0].number }}
           echo Pull Request title: ${{ fromJson(steps.get_pr_data.outputs.result)[0].title }}
-          echo Pull Request description: ${{ env.PR_BODY }}
+          echo Pull Request description: $PR_BODY
           echo $PR_BODY > ./cicd/pr_body.txt
           node ./cicd/parsePR.js
           testsToRun=$(cat ./cicd/testsToRun.txt)
