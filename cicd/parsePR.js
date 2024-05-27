@@ -2,8 +2,6 @@ const fs = require('fs');
 const readline = require('readline')
 
 async function extractTests() {
-
-    //by default we specify that all tests should run
     let testsFile = __dirname + '/testsToRun.txt';
     await fs.promises.writeFile(testsFile, '');
 
@@ -13,11 +11,11 @@ async function extractTests() {
     });
 
     for await (const line of lines) {
-        //special delimeter for apex tests
         if (line.includes('Apex::[') && line.includes(']::Apex')) {
-
-            let tests = line.substring(8, line.length - 7);
-            await fs.promises.writeFile(testsFile, tests);
+            let testClassStartIndex = line.indexOf('Apex::[');
+            let testClassEndIndex = line.indexOf(']::Apex');
+            let testsToRun = line.substring(testClassStartIndex + 'Apex::['.length, testClassEndIndex);
+            await fs.promises.writeFile(testsFile, testsToRun);
             await fs.promises.appendFile(testsFile, '\n');
         }
     }
