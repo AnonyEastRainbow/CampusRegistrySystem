@@ -122,15 +122,15 @@ jobs:
       - name: 'Deploy delta changes to org - skip tests'
         if: ${{ env.apexTestsToRun == '' }}
         run: |
-          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --verbose
+          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --verbose --ignorewarnings
 
       - name: 'Deploy delta changes to org - run specified tests'
         if: ${{ env.apexTestsToRun != '' && env.apexTestsToRun != 'all' }}
         run: |
-          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --testlevel RunSpecifiedTests --runtests ${{env.apexTestsToRun}} --verbose
+          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --testlevel RunSpecifiedTests --runtests ${{env.apexTestsToRun}} --verbose --ignorewarnings
 
       # If the env variable equals all, we run all tests
       - name: 'Deploy delta changes to org - run all tests'
         if: ${{ env.apexTestsToRun == 'all' }}
         run: |
-          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --testlevel RunLocalTests --verbose
+          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --testlevel RunLocalTests --verbose --ignorewarnings
