@@ -174,15 +174,15 @@ jobs:
       - name: 'Check-only deploy delta changes - skip tests'
         if: ${{ env.apexTestsToRun == '' }}
         run: |
-          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --checkonly --verbose
+          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --checkonly --verbose --ignorewarnings
 
       - name: 'Check-only deploy delta changes - run specified tests'
         if: ${{ env.apexTestsToRun != '' && env.apexTestsToRun != 'all' }}
         run: |
-          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --checkonly --testlevel RunSpecifiedTests --runtests ${{env.apexTestsToRun}} --verbose
+          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --checkonly --testlevel RunSpecifiedTests --runtests ${{env.apexTestsToRun}} --verbose --ignorewarnings
 
       # If the env variable equals all, we run all tests
       - name: 'Check-only deploy delta changes - run all tests'
         if: ${{ env.apexTestsToRun == 'all' }}
         run: |
-          sfdx force:source:deploy --sourcepath "changed-sources/force-app" --checkonly --testlevel RunLocalTests --verbose
+          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --checkonly --testlevel RunLocalTests --verbose --ignorewarnings
