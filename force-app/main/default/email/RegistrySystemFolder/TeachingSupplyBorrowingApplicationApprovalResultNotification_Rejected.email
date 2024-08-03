@@ -1,0 +1,23 @@
+您好！
+
+您的如下教学用品借用申请被驳回。
+
+地点：{!TeachingSupplyBorrowingApplication__c.Location__c}
+教室：{!TeachingSupplyBorrowingApplication__c.ClassRoom__c}
+借用人：{!TeachingSupplyBorrowingApplication__c.Borrower__c}
+联系电话：{!TeachingSupplyBorrowingApplication__c.Phone__c}
+物品：{!TeachingSupplyBorrowingApplication__c.TeachingSupply__c}
+数量：{!TeachingSupplyBorrowingApplication__c.Quantity__c}
+借用开始时间：{!TeachingSupplyBorrowingApplication__c.BorrowingStartDateAndTime__c}
+借用结束时间：{!TeachingSupplyBorrowingApplication__c.BorrowingEndDateAndTime__c}
+学院：{!TeachingSupplyBorrowingApplication__c.SecondaryCollegeText__c}
+班级：{!TeachingSupplyBorrowingApplication__c.ClassText__c}
+备注：{!TeachingSupplyBorrowingApplication__c.Remark__c}
+
+审批详情：
+{ApprovalDetail}
+
+您可以登录系统查看完整批准步骤和详情。
+
+Best regards,
+登记系统

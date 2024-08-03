@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>UTF-8</encodingKey>
+    <name>实验室预约申请审批通知</name>
+    <style>none</style>
+    <subject>【登记系统】{!LabBookingApplication__c.ApplicantText__c}已提交{!LabBookingApplication__c.Location__c} {!LabBookingApplication__c.LabAddress__c}实验室预约申请，请及时审批。</subject>
+    <type>text</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

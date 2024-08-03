@@ -1,0 +1,19 @@
+您好！
+
+您的如下请假申请已经审批通过。
+
+学院：{!LeaveApplication__c.SecondaryCollegeText__c}
+专业：{!LeaveApplication__c.Major__c}
+班级：{!LeaveApplication__c.ClassText__c}
+姓名：{!LeaveApplication__c.StudentText__c}
+请假时间：{!LeaveApplication__c.LeaveStartDate__c} 至 {!LeaveApplication__c.LeaveEndDate__c}
+请假天数：{!LeaveApplication__c.LeaveDays__c}
+请假原因：{!LeaveApplication__c.LeaveReason__c}
+
+审批详情：
+{ApprovalDetail}
+
+您可以登录系统查看完整审批步骤和详情。
+
+Best regards,
+登记系统

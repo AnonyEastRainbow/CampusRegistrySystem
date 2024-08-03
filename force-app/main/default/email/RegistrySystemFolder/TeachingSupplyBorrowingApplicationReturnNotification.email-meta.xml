@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>UTF-8</encodingKey>
+    <name>教学用品借用申请归还提醒</name>
+    <style>none</style>
+    <subject>【登记系统】您的{!TeachingSupplyBorrowingApplication__c.TeachingSupply__c}借用申请已超过借用期限，请及时归还。</subject>
+    <type>text</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

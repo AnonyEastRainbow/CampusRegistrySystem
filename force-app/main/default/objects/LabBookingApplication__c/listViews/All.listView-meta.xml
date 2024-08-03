@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>BookedLab__c</columns>
+    <columns>Location__c</columns>
+    <columns>LabAddress__c</columns>
+    <columns>BookingPeriod__c</columns>
+    <columns>Applicant__c</columns>
+    <columns>StudentNumber__c</columns>
+    <columns>SecondaryCollege__c</columns>
+    <columns>Major__c</columns>
+    <columns>Class__c</columns>
+    <columns>CREATEDBY_USER</columns>
+    <columns>X1stApprover__c</columns>
+    <columns>ApprovalStatus__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

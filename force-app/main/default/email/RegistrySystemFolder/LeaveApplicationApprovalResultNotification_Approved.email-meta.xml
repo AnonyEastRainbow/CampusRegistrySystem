@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>UTF-8</encodingKey>
+    <name>请假申请审批通过通知</name>
+    <style>none</style>
+    <subject>【登记系统】{!LeaveApplication__c.StudentText__c}的请假申请已经审批通过</subject>
+    <type>text</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

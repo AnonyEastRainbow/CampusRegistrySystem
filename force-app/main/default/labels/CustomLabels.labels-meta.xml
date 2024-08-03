@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>RS_EmailFromAddress</fullName>
+        <language>zh_CN</language>
+        <protected>true</protected>
+        <shortDescription>组织范围发件人</shortDescription>
+        <value>registry.system@anonyeast.top</value>
+    </labels>
+</CustomLabels>
