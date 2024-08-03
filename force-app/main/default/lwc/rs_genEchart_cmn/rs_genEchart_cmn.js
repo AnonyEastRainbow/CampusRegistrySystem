@@ -55,7 +55,7 @@ export default class Rs_genEchart_cmn extends LightningElement {
             myChart.resize({width: 600, height: 400});
             myChart.setOption(option, true);
         }
-        console.log('myChart.js.05281747.feature ->',myChart);
+        console.log('myChart.js.06051324.feature ->',myChart);
         this.isEchartsInitialized = true;
     }
 }
