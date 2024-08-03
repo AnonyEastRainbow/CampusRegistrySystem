@@ -904,10 +904,6 @@
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <tabVisibilities>
-        <tab>Campus_Dashboard</tab>
-        <visibility>Hidden</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
         <tab>LabBookingApplication__c</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>

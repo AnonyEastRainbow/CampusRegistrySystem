@@ -976,10 +976,6 @@
         <visibility>DefaultOff</visibility>
     </tabVisibilities>
     <tabVisibilities>
-        <tab>Campus_Dashboard</tab>
-        <visibility>DefaultOn</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
         <tab>LabBookingApplication__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
