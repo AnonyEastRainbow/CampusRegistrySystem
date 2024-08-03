@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>UTF-8</encodingKey>
+    <name>教学用品借用申请审批通过通知</name>
+    <style>none</style>
+    <subject>【登记系统】{!TeachingSupplyBorrowingApplication__c.Borrower__c}的{!TeachingSupplyBorrowingApplication__c.TeachingSupply__c}借用申请已经审批通过</subject>
+    <type>text</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BorrowingDateAndTimeValidation</fullName>
+    <active>true</active>
+    <errorConditionFormula>BorrowingStartDateAndTime__c &gt; BorrowingEndDateAndTime__c</errorConditionFormula>
+    <errorMessage>借用开始时间不能晚于借用结束时间。</errorMessage>
+</ValidationRule>

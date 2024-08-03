@@ -1,0 +1,17 @@
+您好！
+
+有如下实验室预约申请等待您的审批。
+
+地址：{!LabBookingApplication__c.Location__c} {!LabBookingApplication__c.LabAddress__c}
+预约时段：{!LabBookingApplication__c.BookingPeriod__c}
+姓名：{!LabBookingApplication__c.ApplicantText__c}
+学号：{!LabBookingApplication__c.StudentNumber__c}
+学院：{!LabBookingApplication__c.SecondaryCollegeText__c}
+专业：{!LabBookingApplication__c.Major__c}
+班级：{!LabBookingApplication__c.ClassText__c}
+
+您可以登录系统或点击链接进入系统审批该申请或查看详情：
+{!LabBookingApplication__c.Link}
+
+Best regards,
+登记系统
