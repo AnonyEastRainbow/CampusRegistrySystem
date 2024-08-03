@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Location__c</columns>
+    <columns>ClassRoom__c</columns>
+    <columns>TeachingSupply__c</columns>
+    <columns>Borrower__c</columns>
+    <columns>Phone__c</columns>
+    <columns>BorrowingStartDateAndTime__c</columns>
+    <columns>BorrowingEndDateAndTime__c</columns>
+    <columns>Quantity__c</columns>
+    <columns>IsBorrowed__c</columns>
+    <columns>IsReturned__c</columns>
+    <columns>ApprovalStatus__c</columns>
+    <columns>Remark__c</columns>
+    <columns>CREATED_DATE</columns>
+    <columns>LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

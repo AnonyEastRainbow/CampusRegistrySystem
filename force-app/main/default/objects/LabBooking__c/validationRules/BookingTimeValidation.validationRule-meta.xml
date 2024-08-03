@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BookingTimeValidation</fullName>
+    <active>true</active>
+    <errorConditionFormula>BookingStartTime__c &gt; BookingEndTime__c</errorConditionFormula>
+    <errorMessage>开放预约时间不能晚于停止预约时间。</errorMessage>
+</ValidationRule>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>X3rdApprover__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <inlineHelpText>请假大于7天，需要班主任、二级学院书记、教务处审批。此字段保存后自动赋值，无需手动填写。</inlineHelpText>
+    <label>教务处审批</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>LA3rdApprover</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

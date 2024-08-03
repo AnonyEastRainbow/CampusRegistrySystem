@@ -1,0 +1,19 @@
+您好！
+
+您的如下实验室预约申请被驳回。
+
+地址：{!LabBookingApplication__c.Location__c} {!LabBookingApplication__c.LabAddress__c}
+预约时段：{!LabBookingApplication__c.BookingPeriod__c}
+姓名：{!LabBookingApplication__c.ApplicantText__c}
+学号：{!LabBookingApplication__c.StudentNumber__c}
+学院：{!LabBookingApplication__c.SecondaryCollegeText__c}
+专业：{!LabBookingApplication__c.Major__c}
+班级：{!LabBookingApplication__c.ClassText__c}
+
+审批详情：
+{ApprovalDetail}
+
+您可以登录系统查看完整批准步骤和详情。
+
+Best regards,
+登记系统
