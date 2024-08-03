@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IsReturnValidation</fullName>
+    <active>true</active>
+    <errorConditionFormula>IF(
+				IsReturned__c = true,
+				IF(
+								IsBorrowed__c = true,
+								false,
+								true
+				),
+				false
+)</errorConditionFormula>
+    <errorMessage>不允许在“是否借出”未勾选时勾选“是否归还”。</errorMessage>
+</ValidationRule>

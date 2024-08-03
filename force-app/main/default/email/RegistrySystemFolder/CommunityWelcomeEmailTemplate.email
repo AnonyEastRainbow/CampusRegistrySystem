@@ -1,0 +1,9 @@
+{!Receiving_User.FirstName} {!Receiving_User.LastName},
+
+我们已为您创建{!Community_Name}账户，您的账户信息如下
+用户名: {!Receiving_User.Username}
+
+请访问以下链接设置您的登录密码：
+{!Community_Url}
+
+{!Organization.Name}

@@ -1,0 +1,17 @@
+您好！
+
+有如下请假申请等待您的审批。
+
+学院：{!LeaveApplication__c.SecondaryCollegeText__c}
+专业：{!LeaveApplication__c.Major__c}
+班级：{!LeaveApplication__c.ClassText__c}
+姓名：{!LeaveApplication__c.StudentText__c}
+请假时间：{!LeaveApplication__c.LeaveStartDate__c} 至 {!LeaveApplication__c.LeaveEndDate__c}
+请假天数：{!LeaveApplication__c.LeaveDays__c}
+请假原因：{!LeaveApplication__c.LeaveReason__c}
+
+您可以登录系统或点击链接进入系统审批该申请或查看详情：
+{!LeaveApplication__c.Link}
+
+Best regards,
+登记系统

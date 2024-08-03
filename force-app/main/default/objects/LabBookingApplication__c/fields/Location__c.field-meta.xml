@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Location__c</fullName>
+    <externalId>false</externalId>
+    <formula>CASE(
+				TEXT(BookedLab__r.Location__c),
+				&apos;MingdeBuilding&apos;,&apos;明德楼&apos;,
+				&apos;BoyaBuilding&apos;,&apos;伯牙楼&apos;,
+				&apos;HongwenBuilding&apos;,&apos;弘文楼&apos;,
+				&apos;DaqianBuilding&apos;,&apos;大千楼&apos;,
+				&apos;GezhiBuilding&apos;,&apos;格致楼&apos;,
+				&apos;TrainingCenter&apos;,&apos;培训中心&apos;,
+				&apos;X1stPracticalTrainingBuilding&apos;,&apos;第一实训楼&apos;,
+				&apos;X2ndPracticalTrainingBuilding&apos;,&apos;第二实训楼&apos;,
+				&apos;X3rdPracticalTrainingBuilding&apos;,&apos;第三实训楼&apos;,
+				&apos;X1stPlayground&apos;,&apos;第一运动场&apos;,
+				&apos;X2ndPlayground&apos;,&apos;第二运动场&apos;,
+				&apos;X3rdPlayground&apos;,&apos;第三运动场&apos;,
+				&apos;X4thPlayground&apos;,&apos;第四运动场&apos;,
+				&apos;X5thPlayground&apos;,&apos;第五运动场&apos;,
+				&apos;GroundTrackField&apos;,&apos;田径场&apos;,
+				TEXT(BookedLab__r.Location__c)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>地点</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

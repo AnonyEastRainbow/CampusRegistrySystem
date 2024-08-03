@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ApproverValidation</fullName>
+    <active>true</active>
+    <errorConditionFormula>IF(
+				IsApprovalRequired__c = true,
+				IF(
+								X1stApprover__c != null,
+								false,
+								true
+				),
+				false
+)</errorConditionFormula>
+    <errorMessage>勾选“需要审批”时，“审批人”不能为空。</errorMessage>
+</ValidationRule>
