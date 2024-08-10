@@ -24,10 +24,12 @@ public with sharing class RS_TeachingSupply_Pst {
         // 将请求体序列化为JSON格式字符串
         String strRequestBody = JSON.serialize(mapRequestBody);
         System.debug('strRequestBody -> ' + strRequestBody);
+        // 从Custom Settings获取DingTalk集成信息
+        DingTalkIntegration__c objDingTalkIntegration = DingTalkIntegration__c.getOrgDefaults();
         // 创建请求
         Http http = new Http();
         HttpRequest request = new HttpRequest();
-        request.setEndpoint('https://oapi.dingtalk.com/robot/send?access_token=' + Label.DingTalk_Token);
+        request.setEndpoint('https://oapi.dingtalk.com/robot/send?access_token=' + objDingTalkIntegration.Token__c);
         request.setMethod('POST');
         request.setHeader('Content-Type', 'application/json;charset=UTF-8');
         request.setBody(strRequestBody);
