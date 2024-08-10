@@ -40,19 +40,19 @@
 
 ## 业务设计
 
-#### 组织机构管理、学生管理
+### 组织机构管理、学生管理
 
 使用标准对象：标准对象Account(客户)、Contact(联系人)分别用于管理组织机构和学生信息。预先准备数据，使用Data Loader导入。
 
-#### 学生请假
+### 学生请假
 
 <img src="assets/学生请假-泳道图.png" style="zoom: 80%;" />
 
-#### 教学用品借用
+### 教学用品借用
 
 <img src="assets/教学用品借用-泳道图.png" style="zoom: 80%;" />
 
-#### 实验室预约
+### 实验室预约
 
 <img src="assets/实验室预约-泳道图.png" style="zoom: 80%;" />
 
@@ -62,45 +62,45 @@
 
 ## 技术特色
 
-#### Report Chart
+### Report Chart
 
 <img src="assets/主页-报表图表.png" />
 
-#### Lightning Record Page embedded with LWC Component
+### Lightning Record Page embedded with LWC Component
 
 <img src="assets/嵌入LWC组件的Lightning Record Page.png" />
 
-#### Email Service
+### Email Service
 
 <img src="assets/Email Service-1.png" style="zoom: 50%;" />
 
 <img src="assets/Email Service-2.png" style="zoom: 50%;" />
 
-#### Validation Rule
+### Validation Rule
 
 <img src="assets/Validation Rule.png" style="zoom: 50%;" />
 
-#### Custom Metadata Type
+### Custom Metadata Type
 
 <img src="assets/自定义元数据类型.png" style="zoom: 50%;" />
 
-#### Approval Process
+### Approval Process
 
 <img src="assets/批准过程.png" style="zoom: 50%;" />
 
-#### Schedule Job
+### Schedule Job
 
 <img src="assets/Schedule Job.png" style="zoom: 80%;" />
 
-#### Integration with Dingtalk
+### Integration with Dingtalk
 
 <img src="assets/与钉钉集成.png" style="zoom: 25%;" />
 
-#### Custom Log object
+### Custom Log object
 
 <img src="assets/自定义日志对象.png" style="zoom: 50%;" />
 
-#### Common class
+### Common class
 
 | Class Name             | Method                                                       | Return Type                      | Description                                  |
 | ---------------------- | ------------------------------------------------------------ | -------------------------------- | -------------------------------------------- |
@@ -113,17 +113,17 @@
 | RS_ApprovalProcess_Cmn | getProcessInstanceWorkitem(Map<Id, SObject>  mapObj)         | Map<Id, ProcessInstanceWorkitem> | 获取记录中正在审批的批准过程实例。           |
 | RS_SObjectUtil_Cmn     | getUserDetailInfoList(Set<Id> setUserId)                     | List<User>                       | 获取用户对应的联系人信息和组织机构信息。     |
 
-#### Experience Cloud
+### Experience Cloud
 
 <img src="assets/Experience Cloud.png" style="zoom: 50%;" />
 
-#### Custom Development using LWC and Apex
+### Custom Development using LWC and Apex
 
 <img src="assets/Custom Development using LWC and Apex-1.png" style="zoom: 50%;" />
 
 <img src="assets/Custom Development using LWC and Apex-2.png" style="zoom: 50%;" />
 
-#### CI/CD
+### CI/CD
 
 本项目于2024年5月引入了CI/CD，所有push到main分支的提交均会通过GitHub Action部署到Org，所有Pull Request需要执行部署前验证。
 
