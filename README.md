@@ -18,15 +18,17 @@
 
 * 内部用户行为：对请假、教学用品借用、实验室预约的申请进行审批，不同用户对特定业务有审批权限，也可为学生代为提交以上申请。
 
-目前系统中所有数据均已经脱敏处理，以下账号供登录系统进行体验，建议使用电脑端体验。
+目前系统中所有数据均已完成脱敏处理，以下账号供登录系统进行体验。
 
 * 内部用户
 
 > 登录地址：https://njtc-dev-ed.my.salesforce.com 或 https://login.salesforce.com
 >
-> 用户名：internal.demo@njtc.edu.cn
+> 用户名：demo@njtc.edu.cn
 >
 > 密码：2023_Jun
+>
+> 注意事项：在移动Web页面不可用，请使用PC端体验。
 
 * 外部用户
 
@@ -99,6 +101,18 @@
 ### Custom Log object
 
 <img src="assets/自定义日志对象.png" style="zoom: 50%;" />
+
+### Trigger
+
+在请假、教学用品借用、实验室预约的业务代码中，部分复杂计算字段、审批人计算和批准通过/拒绝后的邮件通知都是通过Apex Trigger进行处理。所有Trigger均使用了Trigger Handler框架。下表列出了教学用品借用管理中的Trigger实现。
+
+| Class Name                   | Method                                                       | Description                                                |
+| ---------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| RS_TeachingSupply_Before_Hdl | setBorrowingStartAndEndDatetime(List<TeachingSupplyBorrowingApplication__c>  lstBorrowingApplication) | 借用开始时间、借用结束时间字段赋值(仅限按日期和节次借用)。 |
+| RS_TeachingSupply_Before_Hdl | setReceiveAndReutrnContact(List<TeachingSupplyBorrowingApplication__c>  lstBorrowingApplication) | 领取/归还联系信息赋值。                                    |
+| RS_TeachingSupply_After_Hdl  | approvedBorrowingApplicationAction(List<TeachingSupplyBorrowingApplication__c>  lstBorrowingApplication) | 审批通过后的动作：获取邮件模板、审批人、审批历史。         |
+| RS_TeachingSupply_After_Hdl  | rejectedBorrowingApplicationAction(List<TeachingSupplyBorrowingApplication__c>  lstBorrowingApplication) | 审批拒绝后的动作：获取邮件模板、审批人、审批历史。         |
+| RS_TeachingSupply_After_Hdl  | sendEmail(List<TeachingSupplyBorrowingApplication__c>  lstBorrowingApplication, Map<Id,  List<RS_ApprovalProcess_Cmn.ApprovalDetail>>  mapApprovalDetailsByTargetObjIds, Id idTemplate) | 发送邮件通知。                                             |
 
 ### Common class
 
