@@ -23,7 +23,7 @@ jobs:
       - name: 'Setup node.js version'
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 'latest'
 
       # Checkout the source code
       - name: 'Checkout source code'
@@ -96,20 +96,20 @@ jobs:
 
       # Authenticate to org
       - name: 'Authenticate to org'
-        run: sfdx auth:sfdxurl:store --sfdxurlfile ./SFDX_ORG_AUTH.json --setdefaultusername
+        run: sf org login sfdx-url --sfdx-url-file ./SFDX_ORG_AUTH.json --set-default
 
       # Install SFDX-Git-Delta plugin - https://github.com/scolladon/sfdx-git-delta
       - name: 'Install sfdx git delta'
         run: |
-          sfdx version
-          echo y | sfdx plugins:install sfdx-git-delta
-          sfdx plugins
+          sf version
+          echo y | sf plugins install sfdx-git-delta
+          sf plugins
 
       # Use SFDX Git Delta to create a directory with only the metadata that has changed.
       - name: 'Create delta packages for new, modified or deleted metadata'
         run: |
           mkdir changed-sources
-          sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
+          sf sgd source delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
       # Upload delta packages to Artifact for download
       - name: Upload delta packages to Artifact
@@ -122,15 +122,15 @@ jobs:
       - name: 'Deploy delta changes to org - skip tests'
         if: ${{ env.apexTestsToRun == '' }}
         run: |
-          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --verbose --ignorewarnings
+          sf project deploy start --manifest "changed-sources/package/package.xml" --post-destructive-changes "changed-sources/destructiveChanges/destructiveChanges.xml" --verbose --ignore-warnings
 
       - name: 'Deploy delta changes to org - run specified tests'
         if: ${{ env.apexTestsToRun != '' && env.apexTestsToRun != 'all' }}
         run: |
-          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --testlevel RunSpecifiedTests --runtests ${{env.apexTestsToRun}} --verbose --ignorewarnings
+          sf project deploy start --manifest "changed-sources/package/package.xml" --post-destructive-changes "changed-sources/destructiveChanges/destructiveChanges.xml" --test-level RunSpecifiedTests --tests ${{env.apexTestsToRun}} --verbose --ignore-warnings
 
       # If the env variable equals all, we run all tests
       - name: 'Deploy delta changes to org - run all tests'
         if: ${{ env.apexTestsToRun == 'all' }}
         run: |
-          sfdx force:source:deploy --manifest "changed-sources/package/package.xml" --postdestructivechanges "changed-sources/destructiveChanges/destructiveChanges.xml" --testlevel RunLocalTests --verbose --ignorewarnings
+          sf project deploy start --manifest "changed-sources/package/package.xml" --post-destructive-changes "changed-sources/destructiveChanges/destructiveChanges.xml" --test-level RunLocalTests --verbose --ignore-warnings
