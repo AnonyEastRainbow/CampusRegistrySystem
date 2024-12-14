@@ -56,6 +56,8 @@ export default class Rs_genEchart_cmn extends LightningElement {
             myChart.setOption(option, true);
         }
         console.log('myChart.js.12142354.feature ->',myChart);
+        console.log('myChart.js.12142354.feature ->',myChart);
+        console.log('myChart.js.12142354.feature ->',myChart);
         this.isEchartsInitialized = true;
     }
 }
