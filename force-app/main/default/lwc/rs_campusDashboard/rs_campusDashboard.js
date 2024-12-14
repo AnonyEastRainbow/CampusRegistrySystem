@@ -11,6 +11,7 @@ export default class Rs_campusDashboard extends LightningElement {
             this.chartConfiguration = null;
         } else if (data) {
             console.log('data => ', data);
+            console.log('20241215 ');
             this.chartConfiguration = {
                 xAxis: data.data.xAxis,
                 yAxis: {
